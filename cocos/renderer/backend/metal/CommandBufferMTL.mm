@@ -359,12 +359,13 @@ void CommandBufferMTL::endFrame()
     [_mtlRenderEncoder endEncoding];
     [_mtlRenderEncoder release];
     _mtlRenderEncoder = nil;
-    
+
     [_mtlCommandBuffer presentDrawable:DeviceMTL::getCurrentDrawable()];
     _drawableTexture = DeviceMTL::getCurrentDrawable().texture;
     [_mtlCommandBuffer addCompletedHandler:^(id<MTLCommandBuffer> commandBuffer) {
         // GPU work is complete
         // Signal the semaphore to start the CPU work
+        if (_frameBoundarySemaphore)
         dispatch_semaphore_signal(_frameBoundarySemaphore);
     }];
 
